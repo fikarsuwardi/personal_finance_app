@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { logout } from '../features/user/userSlice';
+import { resetTransactionsState } from '../features/transactions/transactionsSlice';
+import { resetBudgetsState } from '../features/budgets/budgetSlice';
+import { resetReportState } from '../features/reports/reportSlice';
 import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
@@ -13,6 +16,9 @@ const Navbar = () => {
 
   const handleLogout = () => {
     dispatch(logout());
+    dispatch(resetTransactionsState());
+    dispatch(resetBudgetsState());
+    dispatch(resetReportState());
     Swal.fire({
       icon: 'success',
       title: 'Logout Successful',

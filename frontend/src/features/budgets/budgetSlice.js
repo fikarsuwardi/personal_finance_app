@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from '../../axios';
 import { logout } from '../user/userSlice';
 
-export const fetchTransactions = createAsyncThunk('transactions/fetchTransactions', async (_, { getState, rejectWithValue }) => {
+export const fetchBudgets = createAsyncThunk('budgets/fetchBudgets', async (_, { getState, rejectWithValue }) => {
   const { user } = getState();
   const config = {
     headers: {
@@ -10,7 +10,7 @@ export const fetchTransactions = createAsyncThunk('transactions/fetchTransaction
     },
   };
   try {
-    const response = await axios.get('/api/transactions', config);
+    const response = await axios.get('/api/budgets', config);
     return response.data;
   } catch (error) {
     if (error.response && error.response.data) {
@@ -20,7 +20,7 @@ export const fetchTransactions = createAsyncThunk('transactions/fetchTransaction
   }
 });
 
-export const addTransaction = createAsyncThunk('transactions/addTransaction', async (transactionData, { getState, rejectWithValue }) => {
+export const addBudget = createAsyncThunk('budgets/addBudget', async (budgetData, { getState, rejectWithValue }) => {
   const { user } = getState();
   const config = {
     headers: {
@@ -28,7 +28,7 @@ export const addTransaction = createAsyncThunk('transactions/addTransaction', as
     },
   };
   try {
-    const response = await axios.post('/api/transactions', transactionData, config);
+    const response = await axios.post('/api/budgets', budgetData, config);
     return response.data;
   } catch (error) {
     if (error.response && error.response.data) {
@@ -38,7 +38,7 @@ export const addTransaction = createAsyncThunk('transactions/addTransaction', as
   }
 });
 
-export const deleteTransaction = createAsyncThunk('transactions/deleteTransaction', async (transactionId, { getState, rejectWithValue }) => {
+export const deleteBudget = createAsyncThunk('budgets/deleteBudget', async (budgetId, { getState, rejectWithValue }) => {
   const { user } = getState();
   const config = {
     headers: {
@@ -46,8 +46,8 @@ export const deleteTransaction = createAsyncThunk('transactions/deleteTransactio
     },
   };
   try {
-    await axios.delete(`/api/transactions/${transactionId}`, config);
-    return transactionId;
+    await axios.delete(`/api/budgets/${budgetId}`, config);
+    return budgetId;
   } catch (error) {
     if (error.response && error.response.data) {
       return rejectWithValue(error.response.data);
@@ -56,62 +56,62 @@ export const deleteTransaction = createAsyncThunk('transactions/deleteTransactio
   }
 });
 
-const transactionsSlice = createSlice({
-  name: 'transactions',
+const budgetSlice = createSlice({
+  name: 'budgets',
   initialState: {
-    transactions: [],
+    budgets: [],
     loading: false,
     error: null,
   },
   reducers: {
-    resetTransactionsState: (state) => {
-      state.transactions = [];
+    resetBudgetsState: (state) => {
+      state.budgets = [];
       state.loading = false;
       state.error = null;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchTransactions.pending, (state) => {
+      .addCase(fetchBudgets.pending, (state) => {
         state.loading = true;
       })
-      .addCase(fetchTransactions.fulfilled, (state, action) => {
+      .addCase(fetchBudgets.fulfilled, (state, action) => {
         state.loading = false;
-        state.transactions = action.payload;
+        state.budgets = action.payload;
       })
-      .addCase(fetchTransactions.rejected, (state, action) => {
+      .addCase(fetchBudgets.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(addTransaction.pending, (state) => {
+      .addCase(addBudget.pending, (state) => {
         state.loading = true;
       })
-      .addCase(addTransaction.fulfilled, (state, action) => {
+      .addCase(addBudget.fulfilled, (state, action) => {
         state.loading = false;
-        state.transactions.push(action.payload);
+        state.budgets.push(action.payload);
       })
-      .addCase(addTransaction.rejected, (state, action) => {
+      .addCase(addBudget.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(deleteTransaction.pending, (state) => {
+      .addCase(deleteBudget.pending, (state) => {
         state.loading = true;
       })
-      .addCase(deleteTransaction.fulfilled, (state, action) => {
+      .addCase(deleteBudget.fulfilled, (state, action) => {
         state.loading = false;
-        state.transactions = state.transactions.filter(transaction => transaction.id !== action.payload);
+        state.budgets = state.budgets.filter(budget => budget.id !== action.payload);
       })
-      .addCase(deleteTransaction.rejected, (state, action) => {
+      .addCase(deleteBudget.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
       .addCase(logout, (state) => {
-        state.transactions = [];
+        state.budgets = [];
         state.loading = false;
         state.error = null;
       });
   },
 });
 
-export default transactionsSlice.reducer;
-export const { resetTransactionsState } = transactionsSlice.actions;
+export default budgetSlice.reducer;
+export const { resetBudgetsState } = budgetSlice.actions;
