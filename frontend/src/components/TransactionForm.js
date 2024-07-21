@@ -8,12 +8,14 @@ const TransactionForm = () => {
     description: '',
     amount: '',
     category: '',
+    type: 'income', // Tambahkan state untuk jenis transaksi
+    date: '', // Tambahkan state untuk tanggal waktu
   });
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.transactions);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [ e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
@@ -29,18 +31,20 @@ const TransactionForm = () => {
         description: '',
         amount: '',
         category: '',
+        type: 'income',
+        date: '',
       });
     } catch (error) {
       Swal.fire({
         icon: 'error',
         title: 'Failed to Add Transaction',
-        text: error || 'Failed to add transaction. Please try again.',
+        text: error.message || 'Failed to add transaction. Please try again.',
       });
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold text-center text-gray-700">Add Transaction</h2>
         <form onSubmit={handleSubmit} className="mt-4">
@@ -80,6 +84,30 @@ const TransactionForm = () => {
               required
             />
           </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Type</label>
+            <select
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-600"
+              required
+            >
+              <option value="income">Income</option>
+              <option value="expense">Expense</option>
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Date</label>
+            <input
+              type="datetime-local"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+              className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-600"
+              required
+            />
+          </div>
           <div className="flex items-center justify-between">
             <button
               type="submit"
@@ -89,7 +117,7 @@ const TransactionForm = () => {
               {loading ? 'Adding...' : 'Add Transaction'}
             </button>
           </div>
-          {error && <p className="mt-4 text-red-600">{error}</p>}
+          {error && <p className="mt-4 text-red-600">{error.message || error}</p>}
         </form>
       </div>
     </div>

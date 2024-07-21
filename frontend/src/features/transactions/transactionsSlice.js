@@ -37,6 +37,24 @@ export const addTransaction = createAsyncThunk('transactions/addTransaction', as
   }
 });
 
+export const deleteTransaction = createAsyncThunk('transactions/deleteTransaction', async (transactionId, { getState, rejectWithValue }) => {
+  const { user } = getState();
+  const config = {
+    headers: {
+      Authorization: `Bearer ${user.userInfo.token}`,
+    },
+  };
+  try {
+    await axios.delete(`/api/transactions/${transactionId}`, config);
+    return transactionId;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      return rejectWithValue(error.response.data);
+    }
+    return rejectWithValue(error.message);
+  }
+});
+
 const transactionsSlice = createSlice({
   name: 'transactions',
   initialState: {
@@ -66,6 +84,17 @@ const transactionsSlice = createSlice({
         state.transactions.push(action.payload);
       })
       .addCase(addTransaction.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(deleteTransaction.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteTransaction.fulfilled, (state, action) => {
+        state.loading = false;
+        state.transactions = state.transactions.filter(transaction => transaction.id !== action.payload);
+      })
+      .addCase(deleteTransaction.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

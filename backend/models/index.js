@@ -1,20 +1,8 @@
-const { Sequelize } = require('sequelize');
-require('dotenv').config();
+const sequelize = require('../config/database');
+const User = require('./userModel');
+const Transaction = require('./transactionModel');
 
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
-  dialect: 'postgres',
-  logging: false,
-});
+User.hasMany(Transaction, { foreignKey: 'userId' });
+Transaction.belongsTo(User, { foreignKey: 'userId' });
 
-const connectDB = async () => {
-  try {
-    await sequelize.authenticate();
-    console.log('Connection has been established successfully.');
-  } catch (error) {
-    console.error('Unable to connect to the database:', error);
-  }
-};
-
-connectDB();
-
-module.exports = sequelize;
+module.exports = { sequelize, User, Transaction };

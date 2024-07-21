@@ -1,7 +1,16 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('./index');
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+const User = require('./userModel');
 
 const Transaction = sequelize.define('Transaction', {
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: User,
+      key: 'id',
+    },
+  },
   description: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -14,10 +23,16 @@ const Transaction = sequelize.define('Transaction', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  userId: {
-    type: DataTypes.INTEGER,
+  type: {
+    type: DataTypes.STRING,
     allowNull: false,
   },
-}, {});
+  date: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
+}, {
+  timestamps: true,
+});
 
 module.exports = Transaction;

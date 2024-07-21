@@ -1,12 +1,11 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('./index');
+const { Sequelize, DataTypes } = require('sequelize');
 const bcrypt = require('bcryptjs');
+const sequelize = require('../config/database');
 
 const User = sequelize.define('User', {
   username: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
   },
   email: {
     type: DataTypes.STRING,
@@ -18,18 +17,14 @@ const User = sequelize.define('User', {
     allowNull: false,
   },
 }, {
-  hooks: {
-    beforeCreate: async (user) => {
-      if (user.password) {
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(user.password, salt);
-      }
-    },
-  },
+  timestamps: true,
 });
 
-User.prototype.matchPassword = async function (enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
-};
+// Hook untuk mengenkripsi password sebelum menyimpan user
+User.beforeSave(async (user) => {
+  if (user.changed('password')) {
+    user.password = await bcrypt.hash(user.password, 10);
+  }
+});
 
 module.exports = User;

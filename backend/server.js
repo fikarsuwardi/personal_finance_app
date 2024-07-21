@@ -1,23 +1,27 @@
 const express = require('express');
-const cors = require('cors');
+const dotenv = require('dotenv');
+const { sequelize } = require('./models');
 const transactionRoutes = require('./routes/transactionRoutes');
 const userRoutes = require('./routes/userRoutes');
-require('dotenv').config();
-const sequelize = require('./models'); // Add this line
+const { notFound, errorHandler } = require('./middleware/errorMiddleware');
+const cors = require('cors'); // Tambahkan ini
+
+dotenv.config();
 
 const app = express();
 
-app.use(cors());
 app.use(express.json());
+app.use(cors()); // Tambahkan ini
 
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/users', userRoutes);
 
+app.use(notFound);
+app.use(errorHandler);
+
 const PORT = process.env.PORT || 5000;
 
-sequelize.sync({ force: false }).then(() => {
-  console.log("Database & tables created!");
-  
+sequelize.sync().then(() => {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
