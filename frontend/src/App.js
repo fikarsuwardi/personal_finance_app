@@ -11,13 +11,15 @@ function App() {
     <Router>
       <div>
         <Navbar />
-        <Routes>
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/add-transaction" element={<TransactionForm />} />
-          <Route path="/transactions" element={<TransactionList />} />
-          <Route path="/" element={<TransactionList />} />
-        </Routes>
+        <div className="pt-16 md:ml-64 p-4">
+          <Routes>
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/add-transaction" element={<TransactionForm />} />
+            <Route path="/transactions" element={<TransactionList />} />
+            <Route path="/" element={<TransactionList />} />
+          </Routes>
+        </div>
       </div>
     </Router>
   );
