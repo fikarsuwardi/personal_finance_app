@@ -1,9 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from '../../axios'; // Gunakan instance axios yang sudah dikonfigurasi
+import axios from '../../axios';
 
 export const registerUser = createAsyncThunk('user/registerUser', async (userData, thunkAPI) => {
   try {
     const response = await axios.post('/api/users/register', userData);
+    // Simpan token ke localStorage setelah berhasil register
+    localStorage.setItem('userInfo', JSON.stringify(response.data));
     return response.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data);
@@ -13,6 +15,8 @@ export const registerUser = createAsyncThunk('user/registerUser', async (userDat
 export const loginUser = createAsyncThunk('user/loginUser', async (userData, thunkAPI) => {
   try {
     const response = await axios.post('/api/users/login', userData);
+    // Simpan token ke localStorage setelah berhasil login
+    localStorage.setItem('userInfo', JSON.stringify(response.data));
     return response.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data);
@@ -22,13 +26,14 @@ export const loginUser = createAsyncThunk('user/loginUser', async (userData, thu
 const userSlice = createSlice({
   name: 'user',
   initialState: {
-    userInfo: null,
+    userInfo: localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null,
     loading: false,
     error: null,
   },
   reducers: {
     logout: (state) => {
       state.userInfo = null;
+      localStorage.removeItem('userInfo'); // Hapus token dari localStorage saat logout
       state.loading = false;
       state.error = null;
     },

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from '../../axios'; // Gunakan instance axios yang sudah dikonfigurasi
+import axios from '../../axios';
 
 export const fetchTransactions = createAsyncThunk('transactions/fetchTransactions', async (_, { getState, rejectWithValue }) => {
   const { user } = getState();
@@ -40,7 +40,7 @@ export const addTransaction = createAsyncThunk('transactions/addTransaction', as
 const transactionsSlice = createSlice({
   name: 'transactions',
   initialState: {
-    transactions: [], // Initial state adalah array kosong
+    transactions: [],
     loading: false,
     error: null,
   },

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { registerUser } from '../features/user/userSlice';
+import { registerUser, loginUser } from '../features/user/userSlice';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -29,8 +29,9 @@ const Register = () => {
         icon: 'success',
         title: 'Registration Successful',
         text: 'You have successfully registered!',
-      }).then(() => {
-        navigate('/login'); // Redirect to login page after successful registration
+      }).then(async () => {
+        await dispatch(loginUser({ email: formData.email, password: formData.password })).unwrap();
+        navigate('/'); // Redirect to home page after successful login
       });
     } catch (error) {
       console.error('Failed to register:', error);
